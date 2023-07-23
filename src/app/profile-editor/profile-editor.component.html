@@ -20,9 +20,21 @@
         <label for="zip">Zip Code: </label>
         <input id="zip" type="text" formControlName="zip">
       </div>
+      <div formArrayName="aliases">
+        <h2>Aliases</h2>
+        <button type="button" (click)="addAlias()">+ Add another alias</button>
+      
+        <div *ngFor="let alias of aliases.controls; let i=index">
+          <!-- The repeated alias template -->
+          <label for="alias-{{ i }}">Alias:</label>
+          <input id="alias-{{ i }}" type="text" [formControlName]="i">
+        </div>
+      </div>
 
     <p>Complete the form to enable button.</p>
     <button type="submit" [disabled]="!profileForm.valid">Submit</button>
 </form>
 
 <button type="button" (click)="updateProfile()">Update Profile</button>
+<p>Form Status: {{ profileForm.status }}</p>
+
