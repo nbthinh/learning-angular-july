@@ -64,7 +64,7 @@ export class AppComponent {
 
     setTimeout(() => {
       this.hybridObserver.registerObserver(observerB);
-    }, 2000);
+    }, 1000);
   }
 }
 
