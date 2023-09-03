@@ -33,7 +33,7 @@ export class AppComponent {
   constructor(){}
 
   hybridObserver = {
-    observers: [observerA, observerB],
+    observers: [observerA],
     // registerObserver(observer: { next: (val: any) => void | string; error: (err: any) => void; complete: () => void; }) {
     registerObserver(observer: ExampleHybridObserver) {
       this.observers.push(observer);
@@ -58,7 +58,7 @@ export class AppComponent {
     // console.log("typeof(observerA) = ", typeof(this.hybridObserver.observers), observerA)
     // this.hybridObserver.registerObserver(observerA);
 
-    this.hybridObserver.registerObserver(observerA);
+    // this.hybridObserver.registerObserver(observerA);
 
     observable.subscribe(this.hybridObserver);
 
