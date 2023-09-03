@@ -3,6 +3,7 @@ import { FormControl } from '@angular/forms';
 import { catchError, combineLatest, defaultIfEmpty, delay, distinct, distinctUntilChanged, filter, find, forkJoin, from, fromEvent, interval, map, merge, Observable, of, onErrorResumeNext, pipe, retry, retryWhen, single, skip, skipUntil, skipWhile, take, takeLast, takeUntil, takeWhile, throwIfEmpty, timer, withLatestFrom, zip } from 'rxjs';
 
 import { Observer } from 'rxjs';
+import { ExampleHybridObserver } from './example-hybrid-observer';
 
 
 @Component({
@@ -33,7 +34,8 @@ export class AppComponent {
 
   hybridObserver = {
     observers: [observerA, observerB],
-    registerObserver(observer: { next: (val: any) => void | string; error: (err: any) => void; complete: () => void; }) {
+    // registerObserver(observer: { next: (val: any) => void | string; error: (err: any) => void; complete: () => void; }) {
+    registerObserver(observer: ExampleHybridObserver) {
       this.observers.push(observer);
     },
     next(value: any) {
