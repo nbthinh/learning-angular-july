@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { catchError, combineLatest, defaultIfEmpty, delay, distinct, distinctUntilChanged, filter, find, forkJoin, from, fromEvent, interval, map, merge, Observable, of, onErrorResumeNext, pipe, retry, retryWhen, single, skip, skipUntil, skipWhile, take, takeLast, takeUntil, takeWhile, throwIfEmpty, timer, withLatestFrom, zip } from 'rxjs';
+import { catchError, combineLatest, defaultIfEmpty, delay, distinct, distinctUntilChanged, filter, find, first, forkJoin, from, fromEvent, fromEventPattern, interval, map, merge, Observable, of, onErrorResumeNext, pipe, retry, retryWhen, single, skip, skipUntil, skipWhile, take, takeLast, takeUntil, takeWhile, throwIfEmpty, timer, withLatestFrom, zip } from 'rxjs';
 
 import { Observer } from 'rxjs';
 import { ExampleHybridObserver } from './example-hybrid-observer';
@@ -48,7 +48,7 @@ export class AppComponent {
       this.observers.forEach(observer => observer.complete());
     }
   }
-  
+  document_click$ = fromEvent(document, "click");
   
   ngOnInit(){
     // this.of_observable.subscribe(x => this.of_list.push(x))
@@ -60,11 +60,22 @@ export class AppComponent {
 
     // this.hybridObserver.registerObserver(observerA);
 
-    observable.subscribe(this.hybridObserver);
+    // observable.subscribe(this.hybridObserver);
 
-    setTimeout(() => {
-      this.hybridObserver.registerObserver(observerB);
-    }, 1000);
+    // setTimeout(() => {
+    //   this.hybridObserver.registerObserver(observerB);
+    // }, 1000);
+    
+
+    const source = fromEvent(document, 'click')
+    .pipe(
+      map(event => {
+        const e = event as MouseEvent;
+        return {x: e.clientX, y:e.clientY};
+        }),
+      filter((obj) => obj.y > 200),
+    );
+    source.subscribe(console.log)
   }
 }
 
@@ -287,6 +298,10 @@ const observerB = {
   complete: () => console.log(`Observer B complete`),
 };
 
+
+function x(x: any, arg1: (PointerEvent: any) => void) {
+  throw new Error('Function not implemented.');
+}
 // setTimeout(() => {
 //   observable.subscribe(observerB);
 // }, 1000);
