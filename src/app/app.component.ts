@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { catchError, combineLatest, defaultIfEmpty, delay, distinct, distinctUntilChanged, filter, find, first, forkJoin, from, fromEvent, fromEventPattern, interval, map, merge, Observable, of, onErrorResumeNext, pipe, retry, retryWhen, single, skip, skipUntil, skipWhile, take, takeLast, takeUntil, takeWhile, throwIfEmpty, timer, withLatestFrom, zip } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, defaultIfEmpty, delay, distinct, distinctUntilChanged, filter, find, first, forkJoin, from, fromEvent, fromEventPattern, interval, map, merge, Observable, of, onErrorResumeNext, pipe, ReplaySubject, retry, retryWhen, single, skip, skipUntil, skipWhile, Subject, take, takeLast, takeUntil, takeWhile, throttleTime, throwIfEmpty, timer, withLatestFrom, zip } from 'rxjs';
 
 import { Observer } from 'rxjs';
 import { ExampleHybridObserver } from './example-hybrid-observer';
@@ -49,6 +49,14 @@ export class AppComponent {
     }
   }
   document_click$ = fromEvent(document, "click");
+
+  searchTerm$ = new Subject<string>();
+
+  subject = new Subject();
+
+  behavior_subject = new BehaviorSubject("Hello")
+
+  replay_subject = new ReplaySubject(2)
   
   ngOnInit(){
     // this.of_observable.subscribe(x => this.of_list.push(x))
@@ -67,15 +75,60 @@ export class AppComponent {
     // }, 1000);
     
 
-    const source = fromEvent(document, 'click')
-    .pipe(
-      map(event => {
-        const e = event as MouseEvent;
-        return {x: e.clientX, y:e.clientY};
+    // const source = fromEvent(document, 'click')
+    // .pipe(
+    //   throttleTime(2000, undefined, {
+    //     leading: false,
+    //     trailing: true,
+    //   }),
+    //   map(event => {
+    //     const e = event as MouseEvent;
+    //     return {x: e.clientX, y:e.clientY};
+    //   })
+    //   // filter((obj) => obj.y > 200),
+    // );
+    // source.subscribe(console.log)
+
+
+    this.searchTerm$
+      .asObservable()
+      .pipe(
+        throttleTime(250, undefined, {
+          leading: true,
+          trailing: true,
         }),
-      filter((obj) => obj.y > 200),
-    );
-    source.subscribe(console.log)
+        distinctUntilChanged()
+      )
+      .subscribe({
+        next: (value) => console.log(value),
+      });
+
+      this.subject.subscribe(val => console.log("print value A = ", val))
+
+      this.subject.next(5)
+      this.subject.next(5)
+      this.subject.next(5)
+      this.subject.subscribe(val => console.log("print value B = ", val))
+      
+      this.behavior_subject.subscribe(val => console.log("Behave A = ", val))
+      this.behavior_subject.next("Haha") 
+      this.behavior_subject.subscribe(val => console.log("Behave B = ", val))
+
+      this.replay_subject.subscribe(val => console.log("replay_subject A = ", val))
+
+      this.replay_subject.next("ABC")
+      this.replay_subject.next("DEF")
+      this.replay_subject.next("GHI")
+      this.replay_subject.next("JKL")
+
+      this.replay_subject.subscribe(val => console.log("replay_subject B = ", val))
+
+    // interval(1000).pipe(throttleTime(2000)).subscribe(console.log)
+  }
+
+  onInput(event: Event) {
+    const target = event.target as HTMLInputElement;
+    this.searchTerm$.next(target.value);
   }
 }
 
